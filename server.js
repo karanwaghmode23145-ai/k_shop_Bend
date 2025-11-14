@@ -1,45 +1,49 @@
-// server.js
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
+import dotenv from "dotenv";
+dotenv.config();
 
-const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
-const { errorHandler, notFound } = require('./middleware/errorMiddleware');
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import userRoutes from "./routes/userRoutes.js";
+
 
 const app = express();
+
+// fix __dirname in ES Module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// static for uploads (images)
+// static folder (uploads)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // routes
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
+app.use("/api/users", userRoutes);
 
 // health check
-app.get('/', (req, res) => res.send('API is running'));
+app.get("/", (req, res) => res.send("API is running"));
 
-// error handlers
-app.use(notFound);
-app.use(errorHandler);
 
-// connect to mongodb and start server
+
 const PORT = process.env.PORT || 5003;
 
+// connect DB + start server
 mongoose
-  .connect(process.env.MONGO_URI)   // 🔥 updated – no deprecated options
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    console.log("MongoDB Connected");
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
   })
   .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
+    console.log("MongoDB Error:", err.message);
     process.exit(1);
   });
