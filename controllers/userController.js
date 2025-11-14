@@ -53,3 +53,25 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get All Users
+
+export const getAllUsers = async (req, res) => {
+  try {
+    console.log("📥 Fetching all users...");
+
+     const users = await User.find().select("-password"); 
+    // password hide kar diya
+
+     console.log("📤 Total Users Found:", users.length);
+
+     res.status(200).json({
+      message: "Users fetched successfully",
+      users,
+    });
+    
+  } catch (error) {
+    console.log("🔥 Error Fetching Users:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
