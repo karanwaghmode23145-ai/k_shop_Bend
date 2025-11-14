@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // Register User Controller
 export const registerUser = async (req, res) => {
@@ -72,6 +73,48 @@ export const getAllUsers = async (req, res) => {
     
   } catch (error) {
     console.log("🔥 Error Fetching Users:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// LOGIN USER
+
+export const loginUser = async (req, res) =>{
+  try {
+    const { email, password } = req.body;
+
+    console.log("📥 Login API Hit");
+    console.log("👉 Received:", req.body);
+
+    // Check user exists
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Compare password
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass) return res.status(400).json({ message: "Invalid password" });
+
+    // Create token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    console.log("✅ Login Success:", user.email);
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        email: user.email,
+      }
+    });
+
+    
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
