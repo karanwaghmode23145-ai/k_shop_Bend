@@ -8,7 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import userRoutes from "./routes/userRoutes.js";
-
+import productRoutes from "./routes/productRoutes.js";
 
 const app = express();
 
@@ -26,11 +26,10 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // routes
 app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
 
 // health check
 app.get("/", (req, res) => res.send("API is running"));
-
-
 
 const PORT = process.env.PORT || 5003;
 

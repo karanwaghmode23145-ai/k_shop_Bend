@@ -1,29 +1,27 @@
-// routes/productRoutes.js
-const express = require('express');
+import express from "express";
+import {
+  createProduct,
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
+
 const router = express.Router();
-const multer = require('multer');
-const { protect, admin } = require('../middleware/authMiddleware');
-const productController = require('../controllers/productController');
 
-// multer setup
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename(req, file, cb) {
-    const ext = file.originalname.split('.').pop();
-    cb(null, `${Date.now()}-${Math.round(Math.random()*1E9)}.${ext}`);
-  }
-});
-const upload = multer({ storage });
+// CREATE
+router.post("/", createProduct);
 
-// public
-router.get('/', productController.getProducts);
-router.get('/:id', productController.getProductById);
+// READ ALL
+router.get("/", getProducts);
 
-// protected admin routes for create/update/delete
-router.post('/', protect, admin, upload.single('image'), productController.createProduct);
-router.put('/:id', protect, admin, upload.single('image'), productController.updateProduct);
-router.delete('/:id', protect, admin, productController.deleteProduct);
+// READ SINGLE
+router.get("/:id", getProductById);
 
-module.exports = router;
+// UPDATE
+router.put("/:id", updateProduct);
+
+// DELETE
+router.delete("/:id", deleteProduct);
+
+export default router;
