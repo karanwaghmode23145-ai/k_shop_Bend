@@ -140,7 +140,7 @@ export const getProducts = async (req, res) => {
   } catch (error) {
 
     console.log("❌ Error Fetching Products:", error);
-    
+
     res.status(500).json({ message: error.message });
   }
 };
@@ -148,6 +148,31 @@ export const getProducts = async (req, res) => {
 // ➤ GET PRODUCT BY ID
 export const getProductById = async (req, res) => {
 
+
+  try {
+    const productId = req.params.id;
+    console.log("🔎 Extracted Product ID:", productId);
+
+    // Validate ID format
+    if (!productId.match(/^[0-9a-fA-F]{24}$/)) {
+      console.log("❌ Invalid MongoDB ObjectId Format");
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+    console.log("⏳ Searching product in database...");
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      console.log("❌ No product found with this ID:", productId);
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    console.log("✅ Product Found:", product.title);
+    res.status(200).json(product);
+
+  } catch (error) {
+    console.log("✅ Product Found:", product.title);
+    res.status(200).json(product);
+  }
 };
 
 // ➤ UPDATE PRODUCT
