@@ -3,6 +3,8 @@ import {
   createProduct,
   getProducts,
   getProductById,
+  getProductsByCategory,
+  filterProducts,
   updateProduct,
   deleteProduct,
 } from "../controllers/productController.js";
@@ -15,7 +17,13 @@ router.post("/", createProduct);
 // READ ALL
 router.get("/", getProducts);
 
-// READ SINGLE
+// CATEGORY WISE (STATIC ROUTE)
+router.get("/category/:name", getProductsByCategory);
+
+// FILTER PRODUCTS (STATIC ROUTE)
+router.get("/filter", filterProducts);
+
+// READ SINGLE (DYNAMIC ROUTE - ALWAYS LAST)
 router.get("/:id", getProductById);
 
 // UPDATE

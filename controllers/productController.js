@@ -175,6 +175,70 @@ export const getProductById = async (req, res) => {
   }
 };
 
+
+// Get products by category
+export const getProductsByCategory = async (req, res) => {
+ try {
+
+  const categoryName = req.params.name;
+  console.log("🟦 Requested Category:", categoryName);
+
+  const products = await Product.find({
+      category: { $regex: new RegExp("^" + categoryName + "$", "i") }
+    });
+
+    console.log("🟩 MongoDB Response Count:", products.length);
+    console.log("🟩 Products Found:", products);
+
+     if (!products.length) {
+      console.log("🔴 No Products Found for category:", categoryName);
+      return res.json([]);
+    }
+
+     res.json(products);
+
+ } catch (error) {
+  console.log("❌ Error in getProductsByCategory:", err);
+    res.status(500).json({ message: "Server Error", error: err });
+ }
+};
+
+// Advanced filter 
+export const filterProducts = async (req, res) =>{
+  try {
+
+    const { category, size, color, sort } = req.query;
+    console.log("📥 Incoming Filters:");
+    console.log("Category:", category);
+    console.log("Size:", size);
+    console.log("Color:", color);
+    console.log("Sort:", sort);
+
+    const filter = {};
+
+    if (category) filter.category = category;
+    if (size) filter.size = size;
+    if (color) filter.color = color;
+
+    console.log("🔥 MongoDB Filter:", filter);
+
+    let products = await Product.find(filter);
+
+    console.log("📦 Products Found:", products.length);
+
+    // Sorting
+    if (sort === "low-high") products.sort((a, b) => a.price - b.price);
+    if (sort === "high-low") products.sort((a, b) => b.price - a.price);
+    if (sort === "rating") products.sort((a, b) => b.rating - a.rating);
+
+    return res.json(products);
+
+  } catch (error) {
+    console.log("❌ Filter Error:", err);
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+}
+
 // ➤ UPDATE PRODUCT
 export const updateProduct = async (req, res) => {
 
