@@ -4,6 +4,7 @@ import {
   getProducts,
   getProductById,
   getProductsByCategory,
+  getRelatedProducts,
   filterProducts,
   updateProduct,
   deleteProduct,
@@ -25,6 +26,9 @@ router.get("/filter", filterProducts);
 
 // READ SINGLE (DYNAMIC ROUTE - ALWAYS LAST)
 router.get("/:id", getProductById);
+
+// GET RELATED PRODUCTS (FIXED)
+router.get("/related/:productId", getRelatedProducts);
 
 // UPDATE
 router.put("/:id", updateProduct);

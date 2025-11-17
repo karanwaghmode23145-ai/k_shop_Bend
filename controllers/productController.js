@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 
 
@@ -238,6 +239,65 @@ export const filterProducts = async (req, res) =>{
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 }
+
+// GET RELATED PRODUCTS
+export const getRelatedProducts = async (req, res) => {
+
+  console.log("📥 GET /api/products/related/:productId called");
+
+  try {
+    const productId = req.params.productId;
+    console.log("🔍 Received productId:", productId);
+
+     // 1) Validate ID
+    const isValid = mongoose.Types.ObjectId.isValid(productId);
+    console.log("🔎 Mongoose ID Valid?:", isValid);
+
+     if (!isValid) {
+      console.log("❌ Invalid MongoDB ObjectId format");
+      return res.status(400).json({ message: "Invalid productId format" });
+    }
+
+    // 2) Find product
+    console.log("⏳ Searching product in DB...");
+    const currentProduct = await Product.findById(productId);
+
+    console.log("🔎 DB result:", currentProduct ? "FOUND" : "NOT FOUND");
+
+    if (!currentProduct) {
+      console.log("❌ Product not found in database!");
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    console.log("✅ Product Found:", {
+      id: currentProduct._id.toString(),
+      title: currentProduct.title,
+      category: currentProduct.category
+    });
+
+    // 3) Find related by category
+    console.log(`⏳ Fetching related products for category: "${currentProduct.category}"`);
+
+    const relatedProducts = await Product.find({
+      category: currentProduct.category,
+      _id: { $ne: productId }
+    }).limit(10);
+
+    console.log(`📦 Related Products Found: ${relatedProducts.length}`);
+
+    if (relatedProducts.length > 0) {
+      console.log("🟢 Sample Related Product:", relatedProducts[0].title);
+    }
+
+    res.json(relatedProducts);
+    
+  } catch (error) {
+    console.log("❌ Error in related products:", error);
+    res.status(500).json({ message: error.message });
+  }
+  
+};
+
 
 // ➤ UPDATE PRODUCT
 export const updateProduct = async (req, res) => {
