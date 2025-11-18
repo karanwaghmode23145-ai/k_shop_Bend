@@ -35,7 +35,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", uploadRoute);
 app.use("/api/reviews", reviewRoutes);
-//
+
+// cart and wishlist
 app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
