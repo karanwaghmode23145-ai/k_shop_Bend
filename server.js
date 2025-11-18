@@ -12,6 +12,9 @@ import productRoutes from "./routes/productRoutes.js";
 import uploadRoute from "./routes/uploadRoute.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 
+import cartRoutes from "./routes/cartRoutes.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
+
 
 const app = express();
 
@@ -32,6 +35,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", uploadRoute);
 app.use("/api/reviews", reviewRoutes);
+//
+app.use("/api/cart", cartRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // health check
 app.get("/", (req, res) => res.send("API is running"));
