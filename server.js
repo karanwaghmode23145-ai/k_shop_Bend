@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // middlewares
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://k-shop-bend.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
